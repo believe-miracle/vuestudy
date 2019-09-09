@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>数据方法</title>
+		<script type="text/javascript" src="js/vue.min.js"></script>
+		<style type="text/css">
+			i{
+				color: #ababab;
+				font-size: 14px;
+			}
+		</style>
+	</head>
+	<body>
+		<!-- 数据选项：对象和函数 组件-函数 -->
+		<div id="app">
+			<i>数据选项：对象和函数 组件-函数</i>
+			<h1>{{title}}</h1>
+			<button-counter></button-counter>
+		</div>
+		<script type="text/javascript">
+			Vue.component('button-counter', {
+				//创建一个Vue组件
+				data() { //必须使用函数类型
+					return {
+						counter: 1
+					}
+				},
+				template: '<button @click="counter++">clicked {{counter}} times</button>'
+			})
+			let vm = new Vue({
+				el: '#app',
+				data: { //对象类型
+					title: 'A Vue App'
+				}
+			})
+		</script>
+		<!-- 单文件组件模板 -->
+		<!-- <template>
+			<div >
+				<h2>{{title}}</h2>
+				<p>{{obj.profile}}</p>
+				<button @click="toggle">toggle</button>
+			</div>
+		</template>
+		<script>
+			export default {
+				name:'Instance',
+				data(){
+					return{
+						title:'A Vue App',
+						obj:{}
+					}
+				},
+				created(){
+				/* 	Object.assign(this.$data,{
+						//为对象赋值属性,没有则添加,有则覆盖
+						profile:'This is a Vue App'
+					})
+					console.log('created',this.obj) */
+					this.$set(this.obj,'profile','This is a Vue App')
+					console.log('created',this.obj) 
+				},
+				mounted(){
+					Object.assign(this.obj,{
+						profile:'This is a Vue Test App'
+					})
+					console.log('mounted',this.obj)
+				},
+				methods:{
+					toggle(){
+						Object.assign(this.obj,{
+						profile:'This is a Vue Test App'
+					})
+					console.log('toggle',this.obj)
+					}
+				}
+			}
+		</script> -->
+		<div id="app1">
+			<i>调用两次组件</i>
+			<br>
+			<button-counter1></button-counter1> <br>
+			<button-counter1></button-counter1>
+		</div>
+		<script type="text/javascript">
+			let jack = {
+				counter: 0
+			}
+			Vue.component('button-counter1', {
+				data() {
+					return {
+						counter: 0
+					}
+				},
+				template: '<button @click="counter++">click {{counter}} times</button>'
+			})
+			let vm1 = new Vue({
+				el: '#app1'
+			})
+		</script>
+
+		<!-- 		<div id="app2">
+			<br>
+			<button-counter2></button-counter2> <br>
+			<button-counter2></button-counter2>
+		</div>
+		<script type="text/javascript">
+			let jack2={
+				counter2:0
+			}
+			Vue.component('button-counter2',{
+				data(){
+					return{
+						JSON.parse(JSON.stringify(jack2)) //深拷贝
+					}
+				}, 
+				template:'<button @click="counter2++ && (console.log(\'click\') )">click {{counter2}} times</button>'
+			})
+			let vm2=new Vue({
+				el:'#app2'
+			})
+		</script> -->
+		<!-- 属性选项 props-数组或对象类型 -->
+		<div id="app3">
+			<i>属性选项 props-数组或对象类型</i><br>
+			<color-text text="Hello World"></color-text>
+			<br>
+			<color-text></color-text>
+			<br>
+			<color-text color="#f78" text="Hello World"></color-text>
+			<br>
+			<color-text color="#43dt" text="Hello World"></color-text>
+			<br>
+			<i>方法选项效果见控制台</i>
+		</div>
+		<script type="text/javascript">
+			Vue.component('color-text', {
+				props: {
+					text: String,
+					color: {
+						type: String,
+						default: '#000',
+						required: true,
+						validator(value) {
+							return /^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$/.test(value)
+						}
+					}
+				},
+				template: '<span :style="{color:color}">{{text}}</span>'
+			})
+			let vm3 = new Vue({
+				el: '#app3'
+			})
+			<!-- 方法选项 -->
+			let store1 = {
+				msg: 'hello world',
+				logMsg: function() {
+					console.log('----------匿名函数----------\n', this)
+					console.log(this.msg)
+				}
+			}
+			store1.logMsg()
+			let store2 = {
+				msg: 'hello world',
+				logMsg: () => {
+					console.log('----------箭头函数----------\n', this)
+					console.log(this.msg)
+				}
+			}
+			store2.logMsg()
+			let store = {
+				msg: '学习已经很可怜了',
+				logMsg() {
+					let store = {
+						msg: '你能不能长点心',
+						logMsg: () => {
+							let store = {
+								msg: '给人多留点时间吧',
+								logMsg: () => {
+									console.log(this.msg)
+								}
+							}
+							store.logMsg()
+						}
+					}
+					store.logMsg()
+				}
+			}
+			store.logMsg()
+		</script>
+		<!-- 计算属性：computed -->
+		<div id="app4" style="font-family: Roboto,sans-serif;color: rgb(84,92,100);margin-left: 100px;">
+			<i>计算属性：computed</i>
+			<br><br>
+			<i>(未使用computed选项)</i>
+			<h2>英语中的"互文"</h2>
+			<p>我们先来看三句话(代码):</p>
+			<p>{{message}}.&nbsp;&nbsp;我看到的是车还是猫。</p>
+			<p>{{message.replace(/\s/g,'')}}</p>
+			<p>{{message.replace(/\s/g,''.split('').reverse().join(''))}}</p>
+			<p>英语中也有"互文"的修辞手法,比如{{message}}这句话,</p>
+			<p>将句中空格去掉可得{{message.replace(/\s/g,'')}},</p>
+			<p>将句中空格去掉并将其倒序可得{{message.replace(/\s/g,'').split('').reverse().join('')}}。</p>
+			<p>可以看到,{{message.replace(/\s/g,'')}}={{message.replace(/\s/g,'').split('').reverse().join('')}}</p>
+			<p>这是一个互文英语的示例</p>
+		</div>
+		<script type="text/javascript">
+			let vm4 = new Vue({
+				el: '#app4',
+				data() {
+					return {
+						message: 'WAS IT A CAR OR A CAT I SAW'
+					}
+				}
+			})
+		</script>
+		<div id="app5" style="font-family: Roboto,sans-serif;color: rgb(84,92,100);margin-left: 100px;">
+			<i>(使用computed选项)</i>
+			<h2>英语中的"互文"</h2>
+			<p>我们先来看三句话(代码):</p>
+			<p>{{message}}.&nbsp;&nbsp;我看到的是车还是猫。</p>
+			<p>{{noSpaceMsg}}</p>
+			<p>{{palindromeMsg}}</p>
+			<p>英语中也有"互文"的修辞手法,比如{{message}}这句话,</p>
+			<p>将句中空格去掉可得{{noSpaceMsg}},</p>
+			<p>将句中空格去掉并将其倒序可得{{palindromeMsg}}。</p>
+			<p>可以看到,{{noSpaceMsg}}={{palindromeMsg}}</p>
+			<p>这是一个互文英语的示例</p>
+		</div>
+		<script type="text/javascript">
+			let vm5 = new Vue({
+				el: '#app5',
+				data() {
+					return {
+						message: 'WAS IT A CAR OR A CAT I SAW'
+					}
+				},
+				computed: {
+					noSpaceMsg() {
+						return this.message.replace(/\s/g, '')
+					},
+					palindromeMsg() {
+						return this.message.replace(/\s/g, '').split('').reverse().join('')
+					}
+				}
+			})
+		</script>
+		<!-- 开发者有权定义可被赋值的computed属性 -->
+		<div id="app6">
+			<i>开发者有权定义可被赋值的computed属性,类似setter和getter</i>
+			<h2>数据变化前</h2>
+			<i>*指令v-once可以限制视图不再响应数据变化</i>
+			<p v-once>{{message}}</p>
+			<p v-once>{{noSpaceMsg}}</p>
+			<h2>数据变化后(控制台修改vm6.message='xx')</h2>
+			<p>{{message}}</p>
+			<p>{{noSpaceMsg}}</p>
+		</div>
+		<script type="text/javascript">
+			let vm6 = new Vue({
+				el: '#app6',
+				data() {
+					return {
+						message: 'WAS IT A CAR OR A CAT I SAW'
+					}
+				},
+				computed: {
+					noSpaceMsg: {
+						set(value) {
+							this.message = value
+						},
+						get() {
+							return this.message.replace(/\s/g, '')
+						}
+					}
+				}
+			})
+		</script>
+		<!-- 侦听属性:watch选项 -->
+		<div id="app7">
+			<i>侦听属性:watch选项</i>
+			<h2>数据变化前</h2>
+			<p v-once>{{message}}</p>
+			<p v-once>{{noSpaceMsg}}</p>
+			<h2>数据变化后(控制台修改vm6.message='xx')</h2>
+			<p>{{message}}</p>
+			<p>{{noSpaceMsg}}</p>
+		</div>
+		<script type="text/javascript">
+			let vm7 = new Vue({
+				el: '#app7',
+				data() {
+					return {
+						message: 'WAS IT A CAR OR A CAT I SAW',
+						noSpaceMsg: 'WASITACARORACATISAW'
+					}
+				},
+				watch: {
+					message(newValue, oldValue) {
+						this.noSpaceMsg = this.message.replace(/\s/g, '')
+					}
+				}
+			})
+		</script>
+		<div id="app8">
+			<i style="color: #ababab;font-size: 14px;">
+				*watch更注重于处理数据变化时的逻辑业务<br>
+				*computed更注重于衍生数据<br>
+				*与computed相比，watch还优于可以异步修改数据<br>
+			</i>
+			<i><br>*使用watch选项为组件异步获取ajax请求的返回值，computed无法达到该效果</i>
+			<h2>数据变化前</h2>
+			<p v-once>{{message}}</p>
+			<p v-once>{{remoteMsg}}</p>
+			<h2>数据变化后(控制台修改vm8.message='xx')</h2>
+			<p>{{message}}</p>
+			<p>{{remoteMsg}}</p>
+		</div>
+		<script type="text/javascript">
+			import axios from 'axios'
+			let vm8=new Vue({
+				el:'#app8',
+				data(){
+					return{
+						message:'书山有路勤为径，学海无涯苦作舟。',
+						remoteMsg:''
+					}
+				},
+				watch:{
+					message(newValue,oldValue){
+						axios({
+							//发送Ajax异步请求
+							method:'GET',
+							url:'/someurl',
+							param:{
+								message:newValue
+							}
+						}).then(res =>{
+							this.remoteMsg=res.data.message//接受响应后,异步修改数据值
+						})
+					}
+				}
+			})
+		</script>
+		<div id="app9">			
+		</div>
+		<script type="text/javascript">
+			let vm9=new Vue({
+				el:'#app9',
+				data(){
+					return{
+						msg:{
+							sender:'Jack',
+							receiver:'Rose'
+						}
+					}
+				},
+				methods:{
+					logLine(){
+						console.log('----------分割线----------')
+					},
+					logMsg(newValue,oldValue){
+						console.log(newValue)
+					}
+				},
+				watch:{
+					msg:{
+						handler:'logMsg',
+						deep:true,
+						immediate:true
+					},
+					'msg.sender':['logLine','logMsg']
+				}
+			})
+		</script>
+	</body>
+</html>

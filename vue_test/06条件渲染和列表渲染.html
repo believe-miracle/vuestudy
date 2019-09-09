@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>条件渲染和列表渲染</title>
+		<script type="text/javascript" src="js/vue.min.js"></script>
+	</head>
+	<body>
+		<!-- v-if  v-show-->
+		<div id="app">
+			<h2>v-if</h2>
+			<h2 v-if="order === 0">站在前排的v-if</h2>
+			<h2 v-else-if="order===1">不上不下的v-else-if</h2>
+			<h2 v-else="">负责垫后的v-else</h2>
+			<button type="button" @click="toggleTitle">切换标题</button>
+			<h2>v-show</h2>
+			<h2 v-show="visible">v-show,visible=true</h2>
+			<h2 v-show="!visible">v-show,visible=false</h2>
+			<h2 v-if="visible">v-if,visible=true</h2>
+			<h2 v-else>v-if,visible=false</h2>
+		</div>
+		<script type="text/javascript">
+			let vm=new Vue({
+				el:'#app',
+				data:{
+					order:0,
+					visible:1
+				},
+				methods:{
+					toggleTitle(){
+						this.order=++this.order %3
+						console.log('order的值为：',this.order)
+					}
+				}
+			})
+		</script>
+		<!-- v-for -->
+		<div id="app1">
+			<!-- <div style="float: left;width: 160px;">
+				<h2>用户列表</h2>
+				<ul>				
+					<li v-for="(item,index) in users ">{{index}}.&nbsp;{{item.name}}</li>
+				</ul>
+			</div>
+			<div style="margin-left: 170px; overflow: hidden;">
+				<h2>用户列表</h2>
+				<ul>
+					<li v-for="(user,uIndex) of users">{{uIndex}}.&nbsp;{{user.name}}</li>
+				</ul>
+			</div> -->
+			<h2>用户列表</h2>
+			<ul>
+				<!-- index作为第二个参数，用以标识下标 -->
+				<li v-for="(user,index) in users">
+					用户{{index+1}}
+					<ul>
+						<!-- key作为第二个参数，用以标识键名 -->
+						<li v-for="(value,key) of user">{{key}}:&nbsp;{{value}}</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<script type="text/javascript">
+				let vm1=new Vue({
+					el:'#app1',
+					data:{
+						
+							users:[
+							{
+								name:'Clark',
+								age:27,
+								city:'Chicago'
+							},
+							{
+								name:'Jackson',
+								age:28,
+								city:'Sydney'
+							}
+							]
+						}	
+					
+				})
+		</script>
+		<!-- 数组方法：push() 和 reverse() -->
+		<div id="app2">
+			<h2>用户列表</h2>
+			<button @click="createUser">创建数组</button>
+			<button @click="reverse">倒叙数组</button>
+			<ul>
+				<!-- index作为第二个参数，用以标识下标 -->
+				<li v-for="(user,index) in users">
+					用户{{index+1}}
+					<ul>
+						<!-- key作为第二个参数，用以标识键名 -->
+						<li v-for="(value,key) of user">
+							<strong style="display: inline-block;width: 60px;">{{key}}:</strong>
+							<span>{{value}}</span>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<script type="text/javascript">
+			let vm2=new Vue({
+				el:'#app2',
+				data:{
+					users:[]
+				},
+				methods:{
+					random(factor,base){
+						/* 根据乘积因子和基数生成随机整数 */
+						return Math.floor(Math.random()*(factor || 1)) + (base || 0)
+					},
+					createUser(){
+						/* 获取name大写首字母 */
+							let fLetter='BJHK'[this.random(3.999)]
+						/* 随机截取name字符串 */
+						let nameStr='abcdefghijklmopqrstuvwsyz'
+						let bLetters=nameStr.substr(this.random(19.999),this.random(3.999,3))
+						let user={
+							name:fLetter+bLetters,
+							age:this.random(5.999,25),
+							city:['Chicago','Sydney','ShenZhen','HangZhou'][this.random(3.999)]
+						}
+						console.log('----------创建用户----------\n',user)
+						this.users.push(user)
+					},
+					reverse(){
+						console.log('----------倒序列表----------\n')
+						console.log('Before:',this.users.map(user => user.name))
+						this.users.reverse()
+						console.log('After:',this.users.map(user => user.name))
+					}
+				}
+			})
+		</script>
+	</body>
+</html>

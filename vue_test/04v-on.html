@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>事件绑定</title>
+		<script type="text/javascript" src="js/vue.min.js"></script>
+	</head>
+	<body>
+		<!-- v-on可简写为@ -->
+		<!--  初识-->
+		<div id="app0">
+			<h1 v-text="message"></h1>
+			<h1 v-html="message"></h1>
+			{{message}}
+			<button v-on:click="changeMessage">改变message</button>
+			
+		</div>
+		<script>
+			new Vue({
+				el:'#app0',
+				//template:'<h1>{{message}}</h1>',
+				data:{
+					message:'<h1>Hello Vue!</h1>'
+				},
+				methods:{
+					changeMessage:function(){
+						this.message="<h1>hello world</h1>";
+					}
+				}
+			})
+		</script>
+		<div id="app1">
+			<button v-on:click="logInfo()">打印消息(default: Hello World)</button>
+			<br>
+			<button v-on:click="logInfo('Self Message')">打印消息(Self Message)</button>
+			<br>
+			<button v-on:click="console.log('A Vue APP')">打印消息(A Vue APP)</button>
+		</div>
+		<script type="text/javascript">
+			let vm1=new Vue({
+				el:'#app1',
+				methods:{
+					logInfo(msg){
+						console.log(msg || 'Hello World')
+					}
+				}
+			})
+		</script>
+		
+		<!-- 获取事件对象 -->
+		<div id="app2">
+			<input type="text" @keyup="handleKeyUp"/>
+			<br>
+			<input type="text" @keyup="handleKeyUp($event)"/>
+		</div>
+		<script type="text/javascript">
+			let vm2=new Vue({
+				el:'#app2',
+				methods:{
+					handleKeyUp(event){
+						console.log(event.key,event)
+					}
+				}
+			})
+		</script>
+		<!-- .prevent修饰符:当事件触发时，阻止元素默认行为 -->
+		<div id="app3">
+			<form @submit="handleSubmit">
+				<h2>不使用修饰符.prevent时</h2>
+				
+				<button type="submit">提交</button>
+			</form>
+		</div>
+		<script type="text/javascript">
+			let vm3=new Vue({
+				el:'#app3',
+				data:{
+					counter:0
+				},
+				methods:{
+					handleSubmit(){
+						console.log(`submit ${++this.counter} times`)
+					}
+				}
+			})
+		</script>
+		<div id="app4">
+			<form @submit.prevent="handleSubmit">
+				<h2>使用修饰符.prevent时</h2>
+				<button type="submit">提交</button>
+			</form>
+			<h2>使用按键修饰符时，键值或键值别名</h2>
+			<input type="text" @keyup.13="console.log($event)"/><br>
+			<input type="text" @keyup.enter="console.log($event)"/>
+		</div>
+		<script type="text/javascript">
+			let vm4=new Vue({
+				el:'#app4',
+				data:{
+					counter:0
+				},
+				methods:{
+					handleSubmit(){
+						console.log(`submit ${++this.counter} times`)
+					}
+				}
+			})
+		</script>
+		<!-- 组合修饰符-->
+		<div id="app5">
+			<h1 @click.ctrl="logWithCtrl" @click="logSingle">没有ctrl别来点我</h1>
+		</div>
+		<script type="text/javascript">
+			let vm5=new Vue({
+				el:'#app5',
+				methods:{
+					logSingle(event){
+						if(!event.ctrlKey){
+							console.log('--------分割线--------')
+							console.log('$event.ctrlKey',event.ctrlKey)
+							console.log('点我干啥，单身汪')
+						}else{
+							console.log('不错,进步很快')
+						}
+					},
+					logWithCtrl(event){
+						console.log('--------分割线--------')
+						console.log('$event.ctrlKey',event.ctrlKey)
+						console.log('按住，是的，按住Ctrl!')
+					}
+				}
+			})	
+		</script>
+	</body>	
+</html>

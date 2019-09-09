@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>属性绑定</title>
+			<script type="text/javascript" src="js/vue.min.js"></script>
+			<style type="text/css">
+				.italic{
+					font-style: italic;
+				}
+				.color-gray{
+					color: gray;
+				}
+				.size-18{
+					font-size: 18px;
+				}
+				.style-italic{
+					font-style: italic;
+				}
+			</style>
+	</head>
+	<body>
+		<!-- v-bind: 可缩写成 : -->
+		
+		<div id="app1" style="margin-left: 300px;">
+			<p v-bind:class="className" v-bind:title="title">危险勿触</p>
+			<button v-bind:disabled="10+10===20">点击有奖</button>
+			<input v-bind:type="'text'" v-bind:placeholder="true ? '请输入' :'请录入'" />
+		</div>
+		<script type="text/javascript">
+			let vm1 =new Vue({
+				el:'#app1',
+				data(){
+					return{
+						className:'italic',
+						title:'危险勿触'
+					}
+				}
+			})
+		</script>
+		<!--类名绑定 -->
+		<div id="app2">
+		<p class="color-gray size-18 style-italic">《Vue2.0 从入门到实战》用心良苦,伴你成长</p>
+		<p :class="classStr">《Vue2.0 从入门到实战》用心良苦,伴你成长</p>
+		<p :class="classArr">《Vue2.0 从入门到实战》用心良苦,伴你成长</p>
+		<p :class="classObj1">《Vue2.0 从入门到实战》用心良苦,伴你成长</p>
+		<p :class="classObj2">《Vue2.0 从入门到实战》用心良苦,伴你成长</p>
+		</div>
+	</body>
+	<script type="text/javascript">
+		let vm2 =new Vue({
+			el:'#app2',
+			data(){
+				return{
+					classStr:'color-gray size-18 style-italic',
+					classArr:['color-gray','size-18','style-italic'],
+					classObj1:{
+						'color-gray':true,
+						'size-18':true,
+						'style-italic':true
+					},
+					classObj2:{
+						'color-gray':0,
+						'size-18':'',
+						'style-italic':false
+					}
+				}
+			}
+		})
+	</script>
+	<!-- 样式绑定 -->
+		<div id="app3">
+		<p style="color:gray; font-size: 18px; font-style: italic;">《Vue2.0 从入门到实战》用心良苦,伴你成长</p>
+		<p :style="classStr2">《Vue2.0 从入门到实战》用心良苦,伴你成长</p>
+		<p :style="classObj3">《Vue2.0 从入门到实战》用心良苦,伴你成长</p>
+		<p :style="classObj4">《Vue2.0 从入门到实战》用心良苦,伴你成长</p>
+		</div>
+		<script type="text/javascript">
+			let vm3 =new Vue({
+				el:'#app3',
+				data(){
+					return{
+						classStr2:'color:gray; font-size: 18px; font-style: italic;',
+						classObj3:{
+							'color':-1?'gray':'black',
+							'font-size':'18px',
+							'font-style':'italic'
+						},
+						classObj4:{
+							'color':0 ? 'gray':'black',
+							'font-size':'' ? '18px' :'',
+							'font-style':null ? 'stalic':''
+						}
+					}
+				}
+			})
+		</script>
+</html>

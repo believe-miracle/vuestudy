@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>DOM渲染</title>
+		<script type="text/javascript" src="js/vue.min.js"></script>
+		<style type="text/css">
+			i {
+				color: #ababab;
+				font-size: 14px;
+			}
+
+			.fixed-width {
+				display: inline-block;
+				width: 100px;
+			}
+
+			.btn {
+				outline: none;
+				border: none;
+				cursor: pointer;
+				padding: 5px 12px;
+			}
+
+			.btn-text {
+				color: #409eff;
+				background-color: transparent;
+			}
+
+			.btn-text :hover {
+				color: #66b1ff;
+			}
+		</style>
+	</head>
+	<body>
+		<i>el:指定挂载目标，css选择器或dom节点</i>
+		<p id="app1"><strong class="fixed-width">CSS选择器:</strong>{{msg}}</p>
+		<p id="app2"><strong class="fixed-width">DOM节点:</strong>{{msg}}</p>
+		<p id="app3"><strong class="fixed-width">手动挂载:</strong>{{msg}}</p>
+		<button type="button" onclick="handleMount()">手动挂载</button>
+		<br>
+		<br>
+		<i>允许字符串作为实例模板-template</i>
+		<div id="app4">
+			target element
+		</div>
+		<button type="button" onclick="handleMount1()">手动替换</button>
+		<br>
+		<i>渲染函数render：提供回调方法createElement创建dom节点</i>
+		<div id="app5">
+			<!-- 将实例中fields & goods 传入组件 -->
+			<fly-table :fields='fields' :goods="goods">
+				<span slot="title">Fly Table Component</span>
+			</fly-table>
+		</div>
+		<br>
+		<i>选项的优先级: render > template 、 el</i><br>
+		<i>当el、render、template共存时</i>
+		<div id="app6">
+			<h1>el:{{msg}}</h1>
+		</div>
+		<i>选项的优先级: template > el</i><br>
+		<i>当el、template共存时</i>
+		<div id="app7">
+			<h1>el:{{msg}}</h1>
+		</div>
+		<script type="text/javascript">
+			let vm1 = new Vue({
+				el: '#app1', // 选择器
+				data() {
+					return {
+						msg: 'Hello World'
+					}
+				}
+			})
+			let vm2 = new Vue({
+				el: document.getElementById('app2'), //HTMLElement
+				data() {
+					return {
+						msg: 'Hello World'
+					}
+				}
+			})
+			let vm3 = new Vue({
+				//el:document.getElementById('app3'),  //这里未使用el,而是用其等效用法
+				data() {
+					return {
+						msg: 'Hello World'
+					}
+				}
+			})
+			let handleMount = function() {
+				vm3.$mount('#app3')
+			}
+			let vm4 = new Vue({
+
+				template: '<h1>template element</h1>' //模板节点将替换原有的dom节点
+			})
+			let handleMount1 = function() {
+				vm4.$mount('#app4')
+			}
+			Vue.component('fly-table', {
+				props: { //组件接收外界传入的参数
+					fields: {
+						type: Array,
+						default () {
+							return []
+						}
+					},
+					goods: {
+						type: Array,
+						default () {
+							return []
+						}
+					}
+				},
+				methods: {
+					reverse() { //定义数组倒序方法
+						this.goods.reverse()
+					}
+				},
+				render(createElement) {
+					//使用render函数渲染dom
+					/**
+					 * createElement 可接收三个参数
+					 * 1.HTML标签字符串(string)|组件选项对象(Object)|节点解析函数(Function)
+					 * 2.定义节点特性的对象
+					 * 3.子节点，createElement构建的VNode节点或字符串生成的无标签文本节点(Array|String)
+					 */
+					return createElement('div', {
+						//作为子组件的插槽名称
+						slot: 'fly-table'
+					}, [
+						createElement('h2', this.$slots.title),
+						createElement('button', {
+							//class用于绑定类名,同v-bind:class的绑定方法
+							class: ['btn', 'btn-text'],
+							//attrs用于绑定节点一般属性,如id、disabled、title等
+							attrs: {
+								disabled: false,
+								title: '点击使数组倒序'
+							},
+							//domProps用于绑定节点dom属性,如innerHTML、innerText等
+							domProps: {
+								innerText: '倒序'
+							},
+							on: {
+								//绑定事件使用箭头函数以免创建函数作用域
+								click: () => {
+									this.goods.reverse()
+								}
+							},
+							//自定义指令
+							directives: [],
+							//其他属性
+							key: 'btnReverse',
+							ref: 'brnReverse'
+						}),
+						createElement('table', {
+							//style用于绑定样式,同v-bind:style的绑定方法
+							style: {
+								width: '400px',
+								textAlign: 'left',
+								lineHeight: '42px',
+								border: '1px solid #eee',
+								userSelect: 'none'
+							}
+						}, [
+							createElement('tr', [this.fields.map(field => createElement('th', field.prop))]),
+							this.goods.map(item => createElement('tr', {
+								style: {
+									color: item.isMarked ? '#ea4335' : ''
+								}
+							}, this.fields.map(field => createElement('td', {
+								style: {
+									borderTop: '1px solid #eee'
+								}
+							}, [
+								field.prop !== 'operate' //如果不是操作列，显示文本
+								?
+								createElement('span', item[field.prop]) :
+								createElement('button', { //否则显示文本
+									class: ['btn', 'btn-text'],
+									domProps: {
+										innerHTML: '<span>切换标记</span>'
+									},
+									on: {
+										click: () => {
+											//当按钮被点击时,切换该行文本标记状态(被标记时字体颜色为红色)
+											item.isMarked = !item.isMarked
+										}
+									}
+								})
+							]))))
+						])
+					])
+				}
+			})
+			//声明Vue实例
+			let vm5 = new Vue({
+				el: '#app5',
+				data() {
+					return {
+						fields: [{
+								label: '名称',
+								prop: 'name'
+							},
+							{
+								label: '数量',
+								prop: 'quantity'
+							},
+							{
+								label: '价格',
+								prop: 'price'
+							},
+							{
+								label: '',
+								prop: 'operate'
+							}
+						],
+						goods: [{
+								name: '苹果',
+								quantity: 200,
+								price: 6.8,
+								isMarked: false
+							},
+							{
+								name: '西瓜',
+								quantity: 50,
+								price: 4.8,
+								isMarked: false
+							},
+							{
+								name: '榴莲',
+								quantity: 0,
+								price: 22.8,
+								isMarked: false
+							}
+						]
+					}
+				}
+			})
+			let vm6 = new Vue({
+				el: '#app6',
+				render(c) {
+					return c('h1', 'render:' + this.msg)
+				},
+				template: '<h1>template:{{msg}}</h1>',
+				data() {
+					return {
+						msg: 'I want you!'
+					}
+				}
+			})
+			let vm7 = new Vue({
+				el: '#app7',
+				template: '<h1>template:{{msg}}</h1>',
+				data() {
+					return {
+						msg: 'I want you!'
+					}
+				}
+			})
+		</script>
+
+	</body>
+</html>

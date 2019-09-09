@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>插值绑定</title>
+		<script type="text/javascript" src="js/vue.min.js"></script>
+		<style type="text/css">
+			.profile{
+				display: inline-block;
+				width: 300px;
+			}
+			.align-center{
+				text-align: center;
+			}
+		</style>
+	</head>
+	<body>
+		<!-- 文本插值 -->
+		<div id="app1" style="margin-left: 300px;">
+			<h2>文本插值</h2>
+			<p><label class="profile">变量：</label>{{num}}</p>
+			<p><label class="profile" >表达式：</label>{{5+10}}</p>
+			<p><label class="profile">三目运算符：</label>{{ture?15:10}}</p>
+			<p><label class="profile">函数：</label>{{getNum()}}</p>
+			<p><label class="profile">匿名函数：</label>{{(()=>5+10)()}}</p>
+			<p><label class="profile">对象：</label>{{num:15}}</p>
+			<p><label class="profile">函数对象：</label>{{getNum}}</p>
+			<p><label class="profile">html代码（表达式）：</label>{{'<span>15</span>'}}</p>
+			<p><label class="profile">html代码（变量）：</label>{{html}}</p>
+		</div>
+		<script type="text/javascript">
+			let vm1=new Vue({
+				el:'#app1',
+				data:{
+					num:'15'
+					html:'<h1>Hello Vue!</h1>'
+				},
+				methods:{
+					getNum(){
+						return this.num
+					}
+				}
+			})
+		</script>
+		<!-- html插值 -->
+		<!-- <div id="app2" style="width: 800px;margin: 0 auto;">
+			<div>{{blog}}</div>
+			<hr>
+			<div v-html="blog"></div>
+		</div>
+		<script type="text/javascript">
+			let vm2=new Vue({
+				el:'#app2',
+				data(){
+					return {
+						blog: 
+						<h1>一对"兄弟"</h1> 
+						<div class="align-center">
+							<img src="http://img.hb.aicdn.com/76c310ae6a6c6166343a23821078d379367f003e2088d-xWozMi_fw658">
+						</div>
+						<p>你看他们多像一对兄弟啊，虽然是一只呆呆兔和一只傻傻猫蹲在了一起，但谁又能说他们不是兄弟呢？</p>
+					}		
+				},
+			})
+		</script> -->
+	</body>
+</html>

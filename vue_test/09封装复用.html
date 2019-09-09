@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>封装复用</title>
+		<script type="text/javascript" src="js/vue.min.js"></script>
+		<style type="text/css">
+			i{
+				color: #ababab;
+				font-size: 14px;
+			}
+		</style>
+	</head>
+	<body>
+		<i>过滤器:filters选项-当前组件或实例</i><br>
+		<i>/*可在双括号插值中添加在javascript表达式的尾部，以管道符号"|"与表达式隔开</i><br><br>
+		<i>filter选项</i>
+		<div id="app1">
+			<h1>{{title}}</h1>
+			<h1>{{title | supplyTitle1}}</h1>
+			<!-- 存在多个filter时，从左至右执行 -->
+			<h1>{{title | supplyTitle1 |supplyTitle2}}</h1>
+		</div><br>
+		<i>全局filter</i>
+		<div id="app2">
+			<h1>{{title}}</h1>
+			<h1>{{title | supplyTitle3}}</h1>
+			<!-- 存在多个filter时，从左至右执行 -->
+			<h1>{{title | supplyTitle3 | supplyTitle4}}</h1>
+		</div><br>
+		<i>自定义指令:directives选项</i>
+		<div id="app3">
+			<h1 v-some.upper>{{title}}</h1>
+			<h1 v-some.lower>{{title}}</h1>
+			<h1 v-style="style">{{title}}</h1>
+			<button type="button" @click="handleStyle">修改v-style</button>
+		</div>
+		<i>组件的注册</i>
+		<div id="app4">
+			<easy-title></easy-title>
+			<easy-wish></easy-wish>
+			<easy-motto></easy-motto>
+		</div>
+		<script type="text/javascript">
+			let vm=new Vue({
+				el:'#app1',
+				data(){
+					return{
+						title:'Test#%for#%Filter.',	
+					}
+				},
+				filters:{
+					supplyTitle1(value){
+						console.log('Supply Title 1')
+						return value.replace(/#/g,' ')
+					},
+					supplyTitle2(value){
+						console.log('Supply Title 2')
+						return value.replace(/%/g,'')
+					} 
+				} 
+			})
+			let vm2=new Vue({
+				el:'#app2',
+				data:{
+					title:'Test#%for#%Filter.'
+				}	
+			}) 
+			Vue.filter('supplyTitle3',value =>{  //表达式的值将作为形参传入
+				console.log('Supply Title 3')
+				return value.replace(/#/g,' ')
+			})
+			Vue.filter('supplyTitle4',value =>{  //表达式的值将作为形参传入
+				console.log('Supply Title 4')
+				return value.replace(/#/g,' ')
+			})
+			
+			let vm3=new Vue({
+				el:'#app3',
+				data(){
+					return{
+						title:'Test for Directive.',
+						style:{ //v-style的参数
+							fontStyle:'italic'
+						}
+					}
+				},
+				methods:{
+					handleStyle(){
+						this.$set(this.style,'color','#ababab')
+						this.$set(this.style,'transforms','ratateX(45deg)')
+					}
+				},
+				directives:{
+					style:{ //用于为节点绑定样式
+						bind(el,binding,vnode){
+							console.log('%c--------- bind的参数:, binding, vnode ---------','font-size: 18px;');
+							console.log('%o\n\n%o\n\n%o',el,binding,vnode);
+							let styles = binding.value; // 获取指令绑定的值
+							Object.keys(styles).forEach(key => el.style[key] = styles[key])
+						},
+						update(el,binding,vnode,oldVnode){
+							console.log('%c--------- update的参数:, binding, vnode, oldVnade ---------','font-size: 18px;');
+							console.log('%o\n\n%o\n\n%o\n\n%o',el,binding,vnode,oldVnode);
+							let styles = binding.value; // 获取指令绑定的值
+							Object.keys(styles).forEach(key => el.style[key] = styles[key])
+						}
+					},
+					//在bind和update时触发相同行为，且无需定义其他钩子函数
+					//指令可以简写为以下形式
+					some (el,binding){
+						let text = el.innerText;
+						let modifiers = binding.modifiers;
+						if(modifiers.upper){
+							el.innerText = text.toUpperCase();
+						}
+						if(modifiers.lower){
+							el.innerText = text.toLowerCase();
+						}
+					}
+
+				}
+			})
+
+			let EasyTitle = {
+				name:'EasyTitle',
+				template:'<h1>大器晚成</h1>'
+			} 
+			let EasyMotto = {
+				name:'EasyMotto',
+				template:'<p>过一方水土，历一番人事</p>'
+			} 
+			let EasyWish = {
+				name:'EasyWish',
+				template:'<p>白发渔樵隐深山，浮名穷利岂愿沾</p>'
+			} 
+			let vm4 = new Vue({
+				el:'#app4',
+				components: {EasyTitle,EasyMotto,EasyWish}
+			})
+		</script>
+	</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>组件</title>
+		<script src="js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+		<style type="text/css">
+			.liked{
+				background: hotpink;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<like></like>
+		</div>
+		<template id="like_comp">
+			<button :class="{liked:liked}" @click="toggle_like()">👍{{like_count}}</button>
+		</template>
+		<script type="text/javascript">
+			Vue.component('like',{
+				//template:'<button :class="{liked:liked}" @click="toggle_like()">👍{{like_count}}</button>',
+				template:'#like_comp',
+				data:function(){
+					return{
+						like_count:10,
+						liked:false,
+					}
+				},
+				methods:{
+					toggle_like:function(){
+						// this.like_count++;
+						if(!this.liked){
+							this.like_count++;
+						}else{
+							this.like_count--;
+						}
+						this.liked=!this.liked;
+					}
+				}
+				
+			})
+			new Vue({
+				el:'#app'
+			})
+		</script>
+		<div id="app1">
+			<br>
+			<br>
+			<alert msg="Yoooo"></alert>
+			
+		</div>
+		<script type="text/javascript">
+			Vue.component('alert',{
+				template:'<button @click="on_click()">弹弹弹</button>',
+				props:['msg'],
+				methods:{
+					on_click:function(){
+						alter(this.msg);
+					}
+				}
+			})
+			new Vue({
+				el:'#app1',
+			})
+		</script>
+	</body>
+</html>
